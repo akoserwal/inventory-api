@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package kessel.inventory.v1beta2;
+
+import "kessel/inventory/v1beta2/check_bulk_permissions_request.proto";
+import "kessel/inventory/v1beta2/consistency_token.proto";
+
+option go_package = "github.com/project-kessel/inventory-api/api/kessel/inventory/v1beta2";
+option java_multiple_files = true;
+option java_package = "org.project_kessel.api.inventory.v1beta2";
+
+// CheckBulkPermissionsResponseItem represents the result of a single permission check.
+message CheckBulkPermissionsResponseItem {
+  // Allowed indicates whether the permission check passed
+  enum Allowed {
+    ALLOWED_UNSPECIFIED = 0;
+    ALLOWED_TRUE = 1;
+    ALLOWED_FALSE = 2;
+    // Future: ALLOWED_CONDITIONAL = 3; for conditional permissions
+  }
+  
+  Allowed allowed = 1;
+}
+
+// CheckBulkPermissionsPair associates a request item with its corresponding result.
+message CheckBulkPermissionsPair {
+  // The original request item
+  CheckBulkPermissionsRequestItem request = 1;
+  
+  // The result of the permission check
+  CheckBulkPermissionsResponseItem item = 2;
+}
+
+// CheckBulkPermissionsResponse contains the results of all permission checks in the request.
+message CheckBulkPermissionsResponse {
+  // Consistency token for read-your-writes consistency
+  ConsistencyToken consistency_token = 1;
+  
+  // Array of request-response pairs, one for each item in the request
+  repeated CheckBulkPermissionsPair pairs = 2;
+}
+

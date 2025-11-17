@@ -7,6 +7,8 @@ import "kessel/inventory/v1beta2/check_request.proto";
 import "kessel/inventory/v1beta2/check_response.proto";
 import "kessel/inventory/v1beta2/check_for_update_request.proto";
 import "kessel/inventory/v1beta2/check_for_update_response.proto";
+import "kessel/inventory/v1beta2/check_bulk_permissions_request.proto";
+import "kessel/inventory/v1beta2/check_bulk_permissions_response.proto";
 import "kessel/inventory/v1beta2/report_resource_request.proto";
 import "kessel/inventory/v1beta2/report_resource_response.proto";
 import "kessel/inventory/v1beta2/delete_resource_request.proto";
@@ -50,6 +52,26 @@ service KesselInventoryService {
   rpc CheckForUpdate(CheckForUpdateRequest) returns (CheckForUpdateResponse) {
     option (google.api.http) = {
       post: "/api/inventory/v1beta2/checkforupdate"
+      body: "*"
+    };
+  }
+
+  // Performs bulk permission checks for multiple resource-subject-relation combinations.
+  //
+  // This API is more efficient than making individual Check calls when verifying permissions
+  // for multiple items. It answers questions like:
+  // "Which of these resources can subject *X* perform action *Y* on?"
+  //
+  // Common use cases include:
+  // - Filtering lists based on user permissions
+  // - Batch authorization checks before performing bulk operations
+  // - Dashboard rendering with multiple permission checks
+  // - Pre-authorization for UI components
+  //
+  // The response includes a result for each item in the request, maintaining the same order.
+  rpc CheckBulkPermissions(CheckBulkPermissionsRequest) returns (CheckBulkPermissionsResponse) {
+    option (google.api.http) = {
+      post: "/api/inventory/v1beta2/checkbulkpermissions"
       body: "*"
     };
   }

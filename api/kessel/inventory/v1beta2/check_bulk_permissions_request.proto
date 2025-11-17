@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package kessel.inventory.v1beta2;
+
+import "buf/validate/validate.proto";
+import "kessel/inventory/v1beta2/resource_reference.proto";
+import "kessel/inventory/v1beta2/subject_reference.proto";
+
+option go_package = "github.com/project-kessel/inventory-api/api/kessel/inventory/v1beta2";
+option java_multiple_files = true;
+option java_package = "org.project_kessel.api.inventory.v1beta2";
+
+// CheckBulkPermissionsRequestItem represents a single permission check in a bulk request.
+message CheckBulkPermissionsRequestItem {
+  // The resource to check permissions on
+  ResourceReference object = 1 [(buf.validate.field).required = true];
+  
+  // The relation/permission to check (e.g., "view", "edit", "delete")
+  string relation = 2 [(buf.validate.field).string.min_len = 1];
+  
+  // The subject (user, service account, etc.) to check permissions for
+  SubjectReference subject = 3 [(buf.validate.field).required = true];
+}
+
+// CheckBulkPermissionsRequest allows checking multiple permissions in a single request.
+// This is more efficient than making individual Check calls when verifying permissions
+// for multiple resource-subject-relation combinations.
+message CheckBulkPermissionsRequest {
+  // Array of permission check items to evaluate
+  repeated CheckBulkPermissionsRequestItem items = 1 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.max_items = 1000
+  ];
+}
+
